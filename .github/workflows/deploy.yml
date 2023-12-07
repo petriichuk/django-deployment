@@ -30,8 +30,3 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      - name: Pull and Start
-        run: |
-          echo "${{ secrets.SSH_KEY }}" > dev.key
-          chmod 600 dev.key
-          scp -i dev.key -o StrictHostKeyChecking=no docker-compose-prod.yml ${{ secrets.INSTANCE_USER }}@${{ secrets.INSTANCE_IP_ADDRESS }}:./
