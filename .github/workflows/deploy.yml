@@ -30,17 +30,6 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{secrets.SSH_KEY}}" > ~/.ssh/dev.key
-          chmod 600 ~/.ssh/dev.key
-          Host dev
-            HostName ${{ secrets.INSTANCE_IP_ADDRESS }}
-            User ${{ secrets.INSTANCE_USER }}
-            IdentifyFile ~/.ssh/dev.key
-            StrictHostKeyChecking no
-          END
       - name: Pull and Start
         run: |
           scp docker-compose-prod.yml ${{ secrets.INSTANCE_USER }}@${{ secrets.INSTANCE_IP_ADDRESS }}:./
