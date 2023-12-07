@@ -33,5 +33,5 @@ jobs:
       - name: Pull and Start
         run: |
           echo "${{ secrets.PROD_DEPLOY_KEY }}" > dev.key
-          chmod 600 ~/.ssh/dev.key
+          chmod 600 dev.key
           scp -i dev.key -o StrictHostKeyChecking=no docker-compose-prod.yml ${{ secrets.INSTANCE_USER }}@${{ secrets.INSTANCE_IP_ADDRESS }}:./
