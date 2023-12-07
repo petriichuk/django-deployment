@@ -43,4 +43,4 @@ jobs:
           END
       - name: Pull and Start
         run: |
-          scp -i ~/.ssh/dev.key -o StrictHostKeyChecking=no -r docker-compose-prod.yml ${{ secrets.INSTANCE_USER }}@${{ secrets.INSTANCE_IP_ADDRESS }}:./
+          scp docker-compose-prod.yml ${{ secrets.INSTANCE_USER }}@${{ secrets.INSTANCE_IP_ADDRESS }}:./
