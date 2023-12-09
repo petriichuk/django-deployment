@@ -31,12 +31,21 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Pull And Run
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_REMOTE_URI: ${{ steps.login-ecr.outputs.registry }}/django-images
         run: |
           echo "${{ secrets.SSH_KEY }}" > dev.key
           chmod 600 dev.key
           scp -i dev.key -o StrictHostKeyChecking=no docker-compose.deploy.yml ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
           ssh -i dev.key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }} << 'ENDSSH'
             ls
+            aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            aws configure set region "eu-west-1"
+            aws configure set output "text"
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+            docker pull ${{ env.IMAGE_REMOTE_URI }}:latest
           ENDSSH
           
         
