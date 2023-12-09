@@ -37,15 +37,20 @@ jobs:
         run: |
           echo "${{ secrets.SSH_KEY }}" > dev.key
           chmod 600 dev.key
+          echo "${{ env.IMAGE_REMOTE_URI }}:latest" > .env
           scp -i dev.key -o StrictHostKeyChecking=no docker-compose.deploy.yml ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
+          scp -i dev.key -o StrictHostKeyChecking=no .env ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
           ssh -i dev.key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }} << 'ENDSSH'
             ls
+            cat .env
             aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
             aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
             aws configure set region "eu-west-1"
             aws configure set output "text"
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
             docker pull ${{ env.IMAGE_REMOTE_URI }}:latest
+            source .env
+            docker-compose -f docker-compose.deploy.yml up -d
           ENDSSH
           
         
