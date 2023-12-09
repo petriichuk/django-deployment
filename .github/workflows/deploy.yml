@@ -35,3 +35,8 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" > dev.key
           chmod 600 dev.key
           scp -i dev.key -o StrictHostKeyChecking=no docker-compose.deploy.yml ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
+          ssh -i dev.key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }} << 'ENDSSH'
+            ls
+          ENDSSH
+          
+        
