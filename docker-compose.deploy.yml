@@ -3,6 +3,7 @@ version: "3.8"
 services:
   web:
     container_name: u1_web
+    env_file: .env
     ports:
       - "8000:8050"
     image: "${BE_IMAGE}"
