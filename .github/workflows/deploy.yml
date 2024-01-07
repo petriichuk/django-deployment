@@ -38,6 +38,8 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" > dev.key
           chmod 600 dev.key
           echo BE_IMAGE="${{ env.IMAGE_REMOTE_URI }}:latest" >> .env
+          echo SQL_PASSWORD="${{ secrets.SQL_PASSWORD }}" >> .env
+          echo SQL_HOST="${{ secrets.SQL_HOST }}" >> .env
           scp -i dev.key -o StrictHostKeyChecking=no docker-compose.deploy.yml ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
           scp -i dev.key -o StrictHostKeyChecking=no .env ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }}:./
           ssh -i dev.key -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP_ADDRESS }} << 'ENDSSH'
